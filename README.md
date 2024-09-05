@@ -6,4 +6,4 @@
 
 # Screenshots
 
-<img src="./screeenshots/image.png" />
+<img src="./screenshots/image.png" />
