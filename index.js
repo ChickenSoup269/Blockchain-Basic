@@ -8,11 +8,20 @@ class Block {
     this.timeStamp = new Date()
 
     this.hash = this.calculateHash()
+    this.mineVar = 0
   }
+
   calculateHash() {
     return hash(
-      this.prevHash + JSON.stringify(this.data) + this.timeStamp
+      this.prevHash + JSON.stringify(this.data) + this.mineVar + this.timeStamp
     ).toString()
+  }
+
+  mine(difficulty) {
+    while (!this.hash.startsWith("0".repeat(difficulty))) {
+      this.mineVar++
+      this.hash = this.calculateHash()
+    }
   }
 }
 
@@ -21,10 +30,11 @@ class Block {
 // })
 
 class Blockchain {
-  constructor() {
+  constructor(difficulty) {
     const genesisBlock = new Block("0000", {
       isGenesis: true,
     })
+    this.difficulty = difficulty
     this.chain = [genesisBlock]
   }
 
@@ -35,6 +45,13 @@ class Blockchain {
   addBlock(data) {
     const lastBlock = this.getLastBlock()
     const newBlock = new Block(lastBlock.hash, data)
+
+    console.log("stat mining: ")
+    console.time("mine")
+    newBlock.mine(this.difficulty)
+
+    console.timeEnd("mine")
+    console.log("end mining: ", newBlock)
 
     this.chain.push(newBlock)
   }
@@ -57,7 +74,7 @@ class Blockchain {
   }
 }
 
-const thienChain = new Blockchain()
+const thienChain = new Blockchain(5)
 console.log(thienChain)
 
 thienChain.addBlock({ from: "thien", to: "bank", amount: "1000000" })
